@@ -1,0 +1,128 @@
+<ion-header [translucent]="true">
+    <ion-toolbar mode="md">
+        <ion-input type="text" #searchBar
+                   placeholder="검색어를 입력해 주세요.">
+        </ion-input>
+
+    </ion-toolbar>
+</ion-header>
+
+<ion-toolbar>
+    <ion-segment (ionChange)="listChange($event)" [(ngModel)]="initialSearch">
+        <ion-segment-button value="mapSearch">
+            지도
+        </ion-segment-button>
+        <ion-segment-button value="listSearch">
+            목록
+        </ion-segment-button>
+    </ion-segment>
+</ion-toolbar>
+
+<ion-content [fullscreen]="true" *ngIf="searchMode === 'map'">
+    <google-map
+            height="100%"
+            width="100%"
+            [zoom]="zoom"
+            [center]="center"
+            [options]="options"
+            (mapDragend)="mapMove()"
+    >
+        <map-marker #markerElem *ngFor="let marker of markers"
+                    [position]="marker.position"
+                    [label]="marker.label"
+                    [title]="marker.title"
+                    (iconChanged)="marker.icon"
+                    [options]="marker.options"
+                    (mapClick)="openInfo(markerElem, marker.info)">
+        </map-marker>
+
+        <map-info-window [innerHTML]="infoContent">
+
+        </map-info-window>
+    </google-map>
+</ion-content>
+
+<ion-content [fullscreen]="true" *ngIf="searchMode === 'list'">
+    <ion-list *ngFor="let marker of markers">
+
+        <ion-card>
+            <ion-card-header>
+                <ion-card-title>{{marker.title}}</ion-card-title>
+                <ion-card-subtitle>{{marker.addr}}</ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+                <p>재고 : {{marker.remainStat}}</p>
+                <p>입고시간 : {{marker.stock_at}}</p>
+                <p>업데이트시간 : {{marker.created_at}}</p>
+                <p>거리 : {{marker.distanceBetween}}</p>
+            </ion-card-content>
+        </ion-card>
+    </ion-list>
+</ion-content>
+<!--
+
+<ion-fab horizontal="start" vertical="bottom" slot="fixed" >
+    <ion-fab-button color="dark" >
+        <ion-icon md="caret-up" ios="options-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+        <ion-list>
+            <ion-item>
+                <ion-label>100개 이상</ion-label>
+                <ion-checkbox color="success" checked="true"
+                              (ionChange)="changeRemain($event, 'plenty')">
+                </ion-checkbox>
+            </ion-item>
+            <ion-item>
+                <ion-label>30~99개</ion-label>
+                <ion-checkbox color="warning" checked="true"
+                              (ionChange)="changeRemain($event, 'some')">
+                </ion-checkbox>
+            </ion-item>
+            <ion-item>
+                <ion-label>2~29개</ion-label>
+                <ion-checkbox color="danger" checked="true"
+                              (ionChange)="changeRemain($event, 'few')">
+                </ion-checkbox>
+            </ion-item>
+            <ion-item>
+                <ion-label>0~1개</ion-label>
+                <ion-checkbox color="medium" checked="true"
+                              (ionChange)="changeRemain($event, 'empty')">
+                </ion-checkbox>
+            </ion-item>
+        </ion-list>
+    </ion-fab-list>
+</ion-fab>
+-->
+
+<div class="mask-checkbox-wrapper">
+    <ion-list>
+        <ion-item>
+            <ion-label>100개 이상</ion-label>
+            <ion-checkbox color="success" checked="true"
+                          (ionChange)="changeRemain($event, 'plenty')">
+            </ion-checkbox>
+        </ion-item>
+        <ion-item>
+            <ion-label>30~99개</ion-label>
+            <ion-checkbox color="warning" checked="true"
+                          (ionChange)="changeRemain($event, 'some')">
+            </ion-checkbox>
+        </ion-item>
+        <ion-item>
+            <ion-label>2~29개</ion-label>
+            <ion-checkbox color="danger" checked="true"
+                          (ionChange)="changeRemain($event, 'few')">
+            </ion-checkbox>
+        </ion-item>
+        <ion-item>
+            <ion-label>0~1개</ion-label>
+            <ion-checkbox color="medium" checked="true"
+                          (ionChange)="changeRemain($event, 'empty')">
+            </ion-checkbox>
+        </ion-item>
+    </ion-list>
+
+</div>
