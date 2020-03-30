@@ -29,6 +29,7 @@ export class MaskMapPage implements OnInit, AfterViewInit {
   searchMode;
   remainFilter = {plenty: true, some: true, few: true, empty: true, break: true};
   isFabListOpen = true;
+
   constructor(
     private maskMapService: MaskMapService,
     private geolocation: Geolocation,
@@ -62,18 +63,6 @@ export class MaskMapPage implements OnInit, AfterViewInit {
     }
   }
 
-  loadData(event) {
-    setTimeout(() => {
-      event.target.complete();
-
-      // App logic to determine if all data is loaded
-      // and disable the infinite scroll
-      if (this.markers.length === 1000) {
-        event.target.disabled = true;
-      }
-    }, 500);
-  }
-
   deg2rad(deg) {
     return deg * Math.PI / 180;
   }
@@ -83,42 +72,11 @@ export class MaskMapPage implements OnInit, AfterViewInit {
       this.markers = [];
       // res.body.stores.filter();
       let stores = res.body.stores;
-      stores = stores.filter(x => x.remain_stat !== 'break');
-      stores = stores.filter(x => x.remain_stat !== null);
-      if (!this.remainFilter.plenty) {
-        stores = stores.filter(x => x.remain_stat !== 'plenty');
-      }
-      if (!this.remainFilter.some) {
-        stores = stores.filter(x => x.remain_stat !== 'some');
-      }
-      if (!this.remainFilter.few) {
-        stores = stores.filter(x => x.remain_stat !== 'few');
-      }
-      if (!this.remainFilter.empty) {
-        stores = stores.filter(x => x.remain_stat !== 'empty');
-      }
+      stores = this.checkRemain(stores);
       stores.forEach(x => {
         const markerContent = this.setMarkerColor(x.remain_stat);
 
-        let distance;
-        const earthRadiusKm = 6371;
-        const dLat = this.deg2rad(x.lat - this.center.lat);
-        const dLon = this.deg2rad(x.lng - this.center.lng);
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-          + Math.sin(dLon / 2) * Math.sin(dLon / 2) *
-          Math.cos(x.lat) * Math.cos(this.center.lat);
-
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const m = earthRadiusKm * c * 1000.0; // Distance in m
-        distance = m.toFixed(2);
-        distance = Math.floor(distance) + 'm';
-
-        // Calc km
-        if (m >= 1000.0) {
-          const km = earthRadiusKm * c;
-          distance = km.toFixed(2);
-          distance = distance + 'km';
-        }
+        const distance = this.checkDistance(x);
 
         let quantity;
         if (x.remain_stat === 'empty') {
@@ -162,6 +120,47 @@ export class MaskMapPage implements OnInit, AfterViewInit {
     });
 
     // console.log('marker', this.markers);
+  }
+
+  private checkDistance(x) {
+    let distance;
+    const earthRadiusKm = 6371;
+    const dLat = this.deg2rad(x.lat - this.center.lat);
+    const dLon = this.deg2rad(x.lng - this.center.lng);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+      + Math.sin(dLon / 2) * Math.sin(dLon / 2) *
+      Math.cos(x.lat) * Math.cos(this.center.lat);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const m = earthRadiusKm * c * 1000.0; // Distance in m
+    distance = m.toFixed(2);
+    distance = Math.floor(distance) + 'm';
+
+    // Calc km
+    if (m >= 1000.0) {
+      const km = earthRadiusKm * c;
+      distance = km.toFixed(2);
+      distance = distance + 'km';
+    }
+    return distance;
+  }
+
+  private checkRemain(stores) {
+    stores = stores.filter(x => x.remain_stat !== 'break');
+    stores = stores.filter(x => x.remain_stat !== null);
+    if (!this.remainFilter.plenty) {
+      stores = stores.filter(x => x.remain_stat !== 'plenty');
+    }
+    if (!this.remainFilter.some) {
+      stores = stores.filter(x => x.remain_stat !== 'some');
+    }
+    if (!this.remainFilter.few) {
+      stores = stores.filter(x => x.remain_stat !== 'few');
+    }
+    if (!this.remainFilter.empty) {
+      stores = stores.filter(x => x.remain_stat !== 'empty');
+    }
+    return stores;
   }
 
   openInfo(marker: MapMarker, info) {
