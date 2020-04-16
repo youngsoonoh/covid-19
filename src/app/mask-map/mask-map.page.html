@@ -43,9 +43,9 @@
 </ion-content>
 
 <ion-content [fullscreen]="true" *ngIf="searchMode === 'list'">
-    <ion-list *ngFor="let marker of markers">
+<!--    <ion-list *ngFor="let marker of markers">-->
 
-        <ion-card>
+        <ion-card *ngFor="let marker of markers">
             <ion-card-header>
                 <ion-card-title>{{marker.title}}</ion-card-title>
                 <ion-card-subtitle>{{marker.addr}}</ion-card-subtitle>
@@ -56,9 +56,12 @@
                 <p>입고시간 : {{marker.stock_at}}</p>
                 <p>업데이트시간 : {{marker.created_at}}</p>
                 <p>거리 : {{marker.distanceBetween}}</p>
+                <p>
+                    <ion-button (click)="displayRoute()">길찾기</ion-button>
+                </p>
             </ion-card-content>
         </ion-card>
-    </ion-list>
+<!--    </ion-list>-->
 </ion-content>
 <!--
 

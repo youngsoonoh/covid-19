@@ -23,6 +23,11 @@ export class MaskMapPage implements OnInit, AfterViewInit {
     minZoom: 7,
   };
 
+  // google direction
+  gmap: google.maps.Map;
+  directionService = google.maps.DirectionsService;
+  directionsDisplay = google.maps.DirectionsRenderer;
+
   markers = [];
   infoContent;
   initialSearch;
@@ -117,6 +122,19 @@ export class MaskMapPage implements OnInit, AfterViewInit {
           }
         });
       });
+
+      console.log(this.markers, ' : this.markers');
+      // sort
+      this.markers.sort((a, b) => {
+          let aDistance = a.distanceBetween.replace('km', '');
+          aDistance = a.distanceBetween.replace('m', '');
+          let bDistance = b.distanceBetween.replace('km', '');
+          bDistance = b.distanceBetween.replace('m', '');
+          return (Number(aDistance) -
+            Number(bDistance));
+        }
+      );
+
     });
 
     // console.log('marker', this.markers);
@@ -283,4 +301,8 @@ export class MaskMapPage implements OnInit, AfterViewInit {
     }
   }
 
+  displayRoute() {
+    alert('준비중 입니다.');
+
+  }
 }
