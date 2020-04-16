@@ -210,8 +210,7 @@ export class MaskMapPage implements OnInit, AfterViewInit {
         header: '공적 마스크 검색(베타)',
         subHeader: '현장과 다를 수 있습니다. ',
         message: '1. 1주당 1인 2매 구매제한<br>' +
-          '2. 요일별 구매 5부제<br>' +
-          '3. 현금으로만 구매 가능<br>',
+          '2. 요일별 구매 5부제<br>',
         /*   inputs: [
              {
                name: 'year',
